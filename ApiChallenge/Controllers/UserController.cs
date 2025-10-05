@@ -1,4 +1,4 @@
-﻿using ApiChallenge.Data.Entities.User;
+﻿using ApiChallenge.Data.Entities;
 using ApiChallenge.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +15,7 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
-    [HttpGet]
+    [HttpGet("get-all")]
     public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
     {
         try

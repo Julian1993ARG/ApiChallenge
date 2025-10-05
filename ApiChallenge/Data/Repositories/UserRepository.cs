@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ApiChallenge.Data.Entities.User;
+using ApiChallenge.Data.Entities;
 
 namespace ApiChallenge.Data.Repositories;
 

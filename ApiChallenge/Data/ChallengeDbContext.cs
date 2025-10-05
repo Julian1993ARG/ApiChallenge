@@ -1,5 +1,5 @@
-﻿using ApiChallenge.Data.Entities.Domicilio;
-using ApiChallenge.Data.Entities.User;
+﻿using ApiChallenge.Data.Entities;
+using ApiChallenge.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiChallenge.Data;

@@ -1,5 +1,5 @@
 using ApiChallenge.Data;
-using ApiChallenge.Data.Entities.User;
+using ApiChallenge.Data.Entities;
 using ApiChallenge.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 

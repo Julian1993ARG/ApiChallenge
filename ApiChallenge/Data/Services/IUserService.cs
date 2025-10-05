@@ -1,4 +1,4 @@
-using ApiChallenge.Data.Entities.User;
+using ApiChallenge.Data.Entities;
 
 namespace ApiChallenge.Services;
 
