@@ -1,5 +1,8 @@
 ﻿using ApiChallenge.Data.Entities;
+using ApiChallenge.Data.Validations;
 using ApiChallenge.Services;
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiChallenge.Controllers;
@@ -9,10 +12,12 @@ namespace ApiChallenge.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IValidator<User> _createUserValidator;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, IValidator<User> createUserValidator)
     {
         _userService = userService;
+        _createUserValidator = createUserValidator;
     }
 
     [HttpGet("get-all")]
@@ -51,8 +56,9 @@ public class UserController : ControllerBase
     {
         try
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var validationResult = await _createUserValidator.ValidateAsync(user);
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
 
             var createdUser = await _userService.CreateAsync(user);
             return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);

@@ -1,6 +1,9 @@
 using ApiChallenge.Data;
+using ApiChallenge.Data.Entities;
 using ApiChallenge.Data.Repositories;
+using ApiChallenge.Data.Validations;
 using ApiChallenge.Services;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +17,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Registrar servicios
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IValidator<User>, CreateUserValidation>();
 
 // Configure DbContext with connection string from appsettings
 builder.Services.AddDbContext<ChallengeDbContext>(options =>

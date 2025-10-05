@@ -1,5 +1,4 @@
 ﻿using ApiChallenge.Data.Entities;
-using ApiChallenge.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiChallenge.Data;
