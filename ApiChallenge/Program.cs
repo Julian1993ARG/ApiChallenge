@@ -1,14 +1,19 @@
 using ApiChallenge.Data;
+using ApiChallenge.Data.Repositories;
+using ApiChallenge.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Registrar repositorios
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Registrar servicios
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Configure DbContext with connection string from appsettings
 builder.Services.AddDbContext<ChallengeDbContext>(options =>
