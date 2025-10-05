@@ -1,5 +1,5 @@
 using ApiChallenge.Data;
-using ApiChallenge.Data.Entities;
+using ApiChallenge.Data.Entities.Dtos;
 using ApiChallenge.Data.Repositories;
 using ApiChallenge.Data.Validations;
 using ApiChallenge.Services;
@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IValidator<User>, CreateUserValidation>();
+builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidation>();
 // Configure DbContext with connection string from appsettings
 builder.Services.AddDbContext<ChallengeDbContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection") 

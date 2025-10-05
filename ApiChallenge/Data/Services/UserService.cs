@@ -24,4 +24,12 @@ public class UserService : GenericService<User, int>, IUserService
     {
         return _userRepository.NombreExistsAsync(nombre);
     }
+
+  public override async Task<IEnumerable<User>> GetAllAsync()
+  {
+    var users = await _userRepository.GetAll()
+      .Include(u => u.Domicilios) 
+      .ToListAsync();
+    return users;
+  }
 }

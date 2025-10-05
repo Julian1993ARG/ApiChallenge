@@ -1,12 +1,12 @@
 
 
-using ApiChallenge.Data.Entities;
+using ApiChallenge.Data.Entities.Dtos;
 using ApiChallenge.Services;
 using FluentValidation;
 
 namespace ApiChallenge.Data.Validations;
 
-public class CreateUserValidation : AbstractValidator<User>
+public class CreateUserValidation : AbstractValidator<CreateUserDto>
 {
     private readonly IUserService _userService;
 

@@ -1,8 +1,8 @@
 ﻿using ApiChallenge.Data.Entities;
-using ApiChallenge.Data.Validations;
+using ApiChallenge.Data.Entities.Dtos;
 using ApiChallenge.Services;
+using AutoMapper;
 using FluentValidation;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiChallenge.Controllers;
@@ -12,21 +12,24 @@ namespace ApiChallenge.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
-    private readonly IValidator<User> _createUserValidator;
+    private readonly IValidator<CreateUserDto> _createUserValidator;
+    private readonly IMapper _mapper;
 
-    public UserController(IUserService userService, IValidator<User> createUserValidator)
+    public UserController(IUserService userService, IValidator<CreateUserDto> createUserValidator, IMapper mapper)
     {
         _userService = userService;
         _createUserValidator = createUserValidator;
+        _mapper = mapper;
     }
 
     [HttpGet("get-all")]
-    public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+    public async Task<ActionResult<IEnumerable<UserWithAddressResponseDto>>> GetAllUsers()
     {
         try
         {
             var users = await _userService.GetAllAsync();
-            return Ok(users);
+            var userDtos = _mapper.Map<IEnumerable<UserWithAddressResponseDto>>(users);
+            return Ok(userDtos);
         }
         catch (Exception ex)
         {
@@ -35,15 +38,15 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUser(int id)
+    public async Task<ActionResult<UserResponseDto>> GetUser(int id)
     {
         try
         {
             var user = await _userService.GetByIdAsync(id);
             if (user == null)
                 return NotFound($"Usuario con ID {id} no encontrado");
-
-            return Ok(user);
+            var userDto = _mapper.Map<UserResponseDto>(user);
+            return Ok(userDto);
         }
         catch (Exception ex)
         {
@@ -52,7 +55,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<User>> CreateUser([FromBody] User user)
+    public async Task<ActionResult<User>> CreateUser([FromBody] CreateUserDto user)
     {
         try
         {
@@ -60,7 +63,8 @@ public class UserController : ControllerBase
             if (!validationResult.IsValid)
                 return BadRequest(validationResult.Errors);
 
-            var createdUser = await _userService.CreateAsync(user);
+            var userEntity = _mapper.Map<User>(user);
+            var createdUser = await _userService.CreateAsync(userEntity);
             return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
         }
         catch (ArgumentException ex)
@@ -78,18 +82,19 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<User>> UpdateUser(int id, [FromBody] User user)
+    public async Task<ActionResult<UserResponseDto>> UpdateUser(int id, [FromBody] UpdateUserDto user)
     {
         try
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var updatedUser = await _userService.UpdateAsync(id, user);
+            var userEntity = _mapper.Map<User>(user);
+            var updatedUser = await _userService.UpdateAsync(id, userEntity);
             if (updatedUser == null)
                 return NotFound($"Usuario con ID {id} no encontrado");
-
-            return Ok(updatedUser);
+            var userDto = _mapper.Map<UserResponseDto>(updatedUser);
+            return Ok(userDto);
         }
         catch (ArgumentException ex)
         {

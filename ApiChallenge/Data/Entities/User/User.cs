@@ -10,4 +10,5 @@ public class User : BaseEntity<int>
 
     [NotNull, MaxLength(300), EmailAddress]
     public string? Email { get; set; }
+    public virtual ICollection<Domicilio>? Domicilios { get; set; }
 }
