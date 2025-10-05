@@ -9,9 +9,19 @@ public class UserService : GenericService<User, int>, IUserService
 {
     private readonly IUserRepository _userRepository;
 
-    public UserService(IUserRepository userRepository, ChallengeDbContext context) 
+    public UserService(IUserRepository userRepository, ChallengeDbContext context)
         : base(userRepository, context)
     {
         _userRepository = userRepository;
+    }
+
+    public Task<bool> EmailExistsAsync(string email)
+    {
+        return _userRepository.EmailExistsAsync(email);
+    }
+
+    public Task<bool> NombreExistsAsync(string nombre)
+    {
+        return _userRepository.NombreExistsAsync(nombre);
     }
 }

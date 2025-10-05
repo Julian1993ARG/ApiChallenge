@@ -4,4 +4,6 @@ namespace ApiChallenge.Services;
 
 public interface IUserService : IGenericService<User, int>
 {
+    Task<bool> EmailExistsAsync(string email);
+    Task<bool> NombreExistsAsync(string nombre);
 }
