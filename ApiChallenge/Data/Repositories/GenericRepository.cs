@@ -4,16 +4,6 @@ using ApiChallenge.Data.Entities;
 
 namespace ApiChallenge.Data.Repositories;
 
-public interface IGenericRepository<T, TId>
-    where T : BaseEntity<TId>
-{
-    Task<T> Insert(T entity);
-    Task<T?> GetById(TId id);
-    IQueryable<T> GetAll();
-    void Update(T entity);
-    Task<bool> HardDelete(TId id);
-}
-
 public abstract class GenericRepository<T, TId> : IGenericRepository<T, TId>
     where T : BaseEntity<TId>
     where TId : IEquatable<TId>
@@ -28,7 +18,6 @@ public abstract class GenericRepository<T, TId> : IGenericRepository<T, TId>
 
     public async Task<T> Insert(T entity)
     {
-        entity.FechaCreacion = DateTime.UtcNow;
         EntityEntry<T> insertedValue = await _context.Set<T>().AddAsync(entity);
         return insertedValue.Entity;
     }
