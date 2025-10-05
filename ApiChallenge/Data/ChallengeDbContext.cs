@@ -6,10 +6,11 @@ namespace ApiChallenge.Data;
 
 public class ChallengeDbContext : DbContext
 {
+    public ChallengeDbContext(DbContextOptions<ChallengeDbContext> options) : base(options)
+    {
+    }
+
     public virtual DbSet<User> Usuarios { get; set; }
 
     public virtual DbSet<Domicilio> Domicilio { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseMySQL("server=127.0.0.1;port=3306;database=codeChallenge;user=root;password=admin");
 }
