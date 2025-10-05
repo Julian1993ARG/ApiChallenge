@@ -12,13 +12,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Registrar repositorios
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-// Registrar servicios
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IValidator<User>, CreateUserValidation>();
-
 // Configure DbContext with connection string from appsettings
 builder.Services.AddDbContext<ChallengeDbContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection") 
