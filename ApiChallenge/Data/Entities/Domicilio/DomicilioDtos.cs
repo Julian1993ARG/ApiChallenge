@@ -14,7 +14,7 @@ public class CreateDomicilioDto
 
     [Required(ErrorMessage = "La provincia es obligatoria")]
     [StringLength(100, ErrorMessage = "La provincia no puede exceder 100 caracteres")]
-    public string Provinicia { get; set; } = string.Empty;
+    public string Provincia { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "La ciudad es obligatoria")]
     [StringLength(100, ErrorMessage = "La ciudad no puede exceder 100 caracteres")]
@@ -25,8 +25,8 @@ public class UpdateDomicilioDto
 {
     public string? Calle { get; set; }
     public string? Numero { get; set; }
-    public string? Provinicia { get; set; }
+    public string? Provincia { get; set; }
     public string? Ciudad { get; set; }
 }
 
-public readonly record struct DomicilioResponseDto(int Id, string Calle, string Numero, string Provinicia, string Ciudad);
+public readonly record struct DomicilioResponseDto(int Id, string Calle, string Numero, string Provincia, string Ciudad);

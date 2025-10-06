@@ -36,7 +36,7 @@ public class CreateDomicilioValidation : AbstractValidator<CreateDomicilioDto>
             .NotEmpty().WithMessage("El número es obligatorio")
             .MaximumLength(20).WithMessage("El número no puede exceder 20 caracteres");
 
-        RuleFor(x => x.Provinicia)
+        RuleFor(x => x.Provincia)
             .NotEmpty().WithMessage("La provincia es obligatoria")
             .MaximumLength(100).WithMessage("La provincia no puede exceder 100 caracteres");
 
