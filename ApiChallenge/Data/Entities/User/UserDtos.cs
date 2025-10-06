@@ -20,7 +20,7 @@ public class CreateUserWithAddressDto : CreateUserDto
 {
   [Required(ErrorMessage = "Debe incluir al menos un domicilio")]
   [MinLength(1, ErrorMessage = "Debe incluir al menos un domicilio")]
-  public List<CreateDomicilioForUserDto>? Domicilios { get; set; }
+  public List<CreateAddressDto>? Domicilios { get; set; }
 }
 public class UpdateUserDto
 {
@@ -30,6 +30,11 @@ public class UpdateUserDto
   [EmailAddress(ErrorMessage = "El formato del email no es válido")]
   [StringLength(255, ErrorMessage = "El email no puede exceder 255 caracteres")]
   public string? Email { get; set; }
+}
+
+public class UpdateUserWithAddressDto : UpdateUserDto
+{
+  public List<CreateOrAlterAddressForUserDto>? Domicilios { get; set; }
 }
 
 public readonly record struct UserResponseDto(int Id, string Nombre, string Email);

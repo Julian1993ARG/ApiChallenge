@@ -24,7 +24,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 // Validator registrations
 builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidation>();
 builder.Services.AddScoped<IValidator<CreateUserWithAddressDto>, CreateUserWithAddressValidation>();
-builder.Services.AddScoped<IValidator<CreateDomicilioForUserDto>, CreateDomicilioForUserValidation>();
+builder.Services.AddScoped<IValidator<CreateAddressDto>, CreateDomicilioForUserValidation>();
 // Configure DbContext with connection string from appsettings
 builder.Services.AddDbContext<ChallengeDbContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection") 

@@ -7,11 +7,11 @@ public class DomicilioMappers : Profile
 {
     public DomicilioMappers()
     {
-        CreateMap<CreateDomicilioDto, Domicilio>().ReverseMap();
-        CreateMap<CreateDomicilioForUserDto, Domicilio>()
+        CreateMap<CreateAddressDto, Domicilio>().ReverseMap();
+        CreateMap<CreateAddressDto, Domicilio>()
             .ForMember(dest => dest.UsuarioId, opt => opt.Ignore()) // Se asignará manualmente
             .ReverseMap();
-        CreateMap<UpdateDomicilioDto, Domicilio>().ReverseMap();
         CreateMap<Domicilio, DomicilioResponseDto>().ReverseMap();
+        CreateMap<Domicilio, CreateOrAlterAddressForUserDto>().ReverseMap();
     }
 }

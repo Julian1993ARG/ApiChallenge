@@ -24,7 +24,7 @@ public class CreateUserWithAddressValidation : AbstractValidator<CreateUserWithA
     }
 }
 
-public class CreateDomicilioForUserValidation : AbstractValidator<CreateDomicilioForUserDto>
+public class CreateDomicilioForUserValidation : AbstractValidator<CreateAddressDto>
 {
     public CreateDomicilioForUserValidation()
     {
