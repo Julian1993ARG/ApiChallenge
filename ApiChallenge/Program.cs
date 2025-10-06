@@ -12,9 +12,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAutoMapper(typeof(Program));
+// Repository registrations
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDomicilioRepository, DomicilioRepository>();
+// Service registrations
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDomicilioService, DomicilioService>();
+
+builder.Services.AddAutoMapper(typeof(Program));
+
+// Validator registrations
 builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidation>();
 builder.Services.AddScoped<IValidator<CreateUserWithAddressDto>, CreateUserWithAddressValidation>();
 builder.Services.AddScoped<IValidator<CreateDomicilioDto>, CreateDomicilioValidation>();
