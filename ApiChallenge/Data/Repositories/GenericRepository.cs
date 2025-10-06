@@ -9,6 +9,7 @@ public abstract class GenericRepository<T, TId> : IGenericRepository<T, TId>
     where TId : IEquatable<TId>
 {
     private readonly ChallengeDbContext _context;
+    private bool _disposed = false;
     protected DbSet<T> Entities => _context.Set<T>();
 
     protected GenericRepository(ChallengeDbContext context)
@@ -23,8 +24,13 @@ public abstract class GenericRepository<T, TId> : IGenericRepository<T, TId>
     }
 
     public virtual async Task<T?> GetById(TId id)
-        => await _context.Set<T>()
-            .FirstAsync(a => a.Id.Equals(id));
+    {
+        if (id == null)
+            return null;
+            
+        return await _context.Set<T>()
+            .FirstOrDefaultAsync(a => EqualityComparer<TId>.Default.Equals(a.Id, id));
+    }
 
 
     public IQueryable<T> GetAll()
@@ -42,5 +48,23 @@ public abstract class GenericRepository<T, TId> : IGenericRepository<T, TId>
             return false;
         _context.Set<T>().Remove(entity);
         return true;
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                _context?.Dispose();
+            }
+            _disposed = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }
