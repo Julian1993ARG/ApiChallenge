@@ -28,6 +28,24 @@ public class UserController : ControllerBase
         _mapper = mapper;
     }
 
+    [HttpGet("Search")]
+    public async Task<ActionResult<IEnumerable<UserWithAddressResponseDto>>> SearchUsers(
+    [FromQuery] string? nombre = null,
+    [FromQuery] string? provincia = null,
+    [FromQuery] string? ciudad = null)
+    {
+        try
+        {
+            var users = await _userService.SearchUsersAsync(nombre, provincia, ciudad);
+            var usersDto = _mapper.Map<List<UserWithAddressResponseDto>>(users);
+            return Ok(usersDto);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error al buscar usuarios: {ex.Message}");
+        }
+    }
+
     [HttpGet("get-all")]
     public async Task<ActionResult<IEnumerable<UserWithAddressResponseDto>>> GetAllUsers()
     {
@@ -88,7 +106,7 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPost("create-user-with-address")]
+    [HttpPost("CreateUserWithAddress")]
     public async Task<ActionResult<UserWithAddressResponseDto>> CreateUserWithAddress([FromBody] CreateUserWithAddressDto user)
     {
         try
