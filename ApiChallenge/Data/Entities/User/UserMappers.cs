@@ -9,7 +9,7 @@ public class UserMappers : Profile
     {
         CreateMap<CreateUserDto, User>().ReverseMap();
         CreateMap<CreateUserWithAddressDto, User>()
-            .ForMember(dest => dest.Domicilios, opt => opt.Ignore()) // Se manejará manualmente en el servicio
+            .ForMember(dest => dest.Domicilios, opt => opt.Ignore())
             .ReverseMap();
         CreateMap<UpdateUserDto, User>().ReverseMap();
         CreateMap<User, UserResponseDto>().ReverseMap();

@@ -20,13 +20,13 @@ public class CreateUserWithAddressValidation : AbstractValidator<CreateUserWithA
             .NotEmpty().WithMessage("Debe incluir al menos un domicilio")
             .Must(d => d != null && d.Count > 0).WithMessage("Debe incluir al menos un domicilio");
 
-        RuleForEach(x => x.Domicilios).SetValidator(new CreateDomicilioValidation());
+        RuleForEach(x => x.Domicilios).SetValidator(new CreateDomicilioForUserValidation());
     }
 }
 
-public class CreateDomicilioValidation : AbstractValidator<CreateDomicilioDto>
+public class CreateDomicilioForUserValidation : AbstractValidator<CreateDomicilioForUserDto>
 {
-    public CreateDomicilioValidation()
+    public CreateDomicilioForUserValidation()
     {
         RuleFor(x => x.Calle)
             .NotEmpty().WithMessage("La calle es obligatoria")

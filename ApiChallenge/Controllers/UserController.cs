@@ -89,7 +89,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("create-user-with-address")]
-    public async Task<ActionResult<UserResponseDto>> CreateUserWithAddress([FromBody] CreateUserWithAddressDto user)
+    public async Task<ActionResult<UserWithAddressResponseDto>> CreateUserWithAddress([FromBody] CreateUserWithAddressDto user)
     {
         try
         {
@@ -98,7 +98,8 @@ public class UserController : ControllerBase
                 return BadRequest(validationResult.Errors);
 
             var userEntity = _mapper.Map<User>(user);
-            var createdUser = await _userService.CreateUserWithAddressesAsync(userEntity, userEntity.Domicilios!);
+            var domicilios = _mapper.Map<IEnumerable<Domicilio>>(user.Domicilios);
+            var createdUser = await _userService.CreateUserWithAddressesAsync(userEntity, domicilios);
             var userDto = _mapper.Map<UserWithAddressResponseDto>(createdUser);
             return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, userDto);
         }
