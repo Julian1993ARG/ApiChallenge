@@ -2,7 +2,7 @@ using ApiChallenge.Data.Entities;
 
 namespace ApiChallenge.Services;
 
-public interface IGenericService<T, TId>
+public interface IGenericService<T, TId> : IDisposable
     where T : BaseEntity<TId>
 {
     Task<T> CreateAsync(T entity);

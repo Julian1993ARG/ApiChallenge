@@ -15,14 +15,27 @@ public class DomicilioService : GenericService<Domicilio, int>, IDomicilioServic
     }
     public async Task<IEnumerable<Domicilio>> CreateMultipleAsync(IEnumerable<Domicilio> domicilios)
     {
-        var createdDomicilios = new List<Domicilio>();
+        using var transaction = await _context.Database.BeginTransactionAsync();
         
-        foreach (var domicilio in domicilios)
+        try
         {
-            var created = await CreateAsync(domicilio);
-            createdDomicilios.Add(created);
-        }
+            var createdDomicilios = new List<Domicilio>();
+            
+            foreach (var domicilio in domicilios)
+            {
+                var created = await _domicilioRepository.Insert(domicilio);
+                createdDomicilios.Add(created);
+            }
 
-        return createdDomicilios;
+            await SaveChangesAsync();
+            await transaction.CommitAsync();
+            
+            return createdDomicilios;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 }

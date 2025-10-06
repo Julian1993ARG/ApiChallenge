@@ -11,6 +11,7 @@ public abstract class GenericService<T, TId> : IGenericService<T, TId>
 {
     protected readonly IGenericRepository<T, TId> _repository;
     protected readonly ChallengeDbContext _context;
+    private bool _disposed = false;
 
     protected GenericService(IGenericRepository<T, TId> repository, ChallengeDbContext context)
     {
@@ -72,5 +73,25 @@ public abstract class GenericService<T, TId> : IGenericService<T, TId>
         {
             return false;
         }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                _repository?.Dispose();
+                // No disposamos el _context aquí porque es inyectado por DI
+                // y debe ser manejado por el contenedor de DI
+            }
+            _disposed = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }
