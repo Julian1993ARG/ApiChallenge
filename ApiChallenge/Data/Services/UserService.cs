@@ -30,7 +30,7 @@ public class UserService : GenericService<User, int>, IUserService
     public override async Task<IEnumerable<User>> GetAllAsync()
     {
         var users = await _userRepository.GetAll()
-            .Include(u => u.Domicilios) 
+            .Include(u => u.Domicilios)
             .ToListAsync();
         return users;
     }
@@ -38,7 +38,7 @@ public class UserService : GenericService<User, int>, IUserService
     public async Task<User> CreateUserWithAddressesAsync(User user, IEnumerable<Domicilio> domicilios)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
-        
+
         try
         {
             if (await EmailExistsAsync(user.Email!))
@@ -68,5 +68,23 @@ public class UserService : GenericService<User, int>, IUserService
             await transaction.RollbackAsync();
             throw;
         }
+    }
+
+    public async Task<List<User>> SearchUsersAsync(string? nombre = null, string? provincia = null, string? ciudad = null)
+    {
+        var query = _context.Usuarios
+              .Include(u => u.Domicilios)
+              .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(nombre))
+            query = query.Where(u => u.Nombre.Contains(nombre));
+
+        if (!string.IsNullOrWhiteSpace(provincia))
+            query = query.Where(u => u.Domicilios != null && u.Domicilios.Any(d => d.Provincia != null && d.Provincia.Contains(provincia)));
+
+        if (!string.IsNullOrWhiteSpace(ciudad))
+            query = query.Where(u => u.Domicilios != null && u.Domicilios.Any(d => d.Ciudad != null && d.Ciudad.Contains(ciudad)));
+
+        return await query.ToListAsync();
     }
 }
