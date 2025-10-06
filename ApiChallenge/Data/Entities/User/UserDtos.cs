@@ -16,6 +16,12 @@ public class CreateUserDto
   public string Email { get; set; } = string.Empty;
 }
 
+public class CreateUserWithAddressDto : CreateUserDto
+{
+  [Required(ErrorMessage = "Debe incluir al menos un domicilio")]
+  [MinLength(1, ErrorMessage = "Debe incluir al menos un domicilio")]
+  public List<CreateDomicilioDto>? Domicilios { get; set; }
+}
 public class UpdateUserDto
 {
   [StringLength(100, MinimumLength = 2, ErrorMessage = "El nombre debe tener entre 2 y 100 caracteres")]
@@ -27,4 +33,4 @@ public class UpdateUserDto
 }
 
 public readonly record struct UserResponseDto(int Id, string Nombre, string Email);
-public readonly record struct UserWithAddressResponseDto(int Id, string Nombre, string Email, IEnumerable<Domicilio> Domicilios);
+public readonly record struct UserWithAddressResponseDto(int Id, string Nombre, string Email, IEnumerable<DomicilioResponseDto> Domicilios);

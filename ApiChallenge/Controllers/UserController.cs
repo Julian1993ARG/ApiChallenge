@@ -13,12 +13,18 @@ public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IValidator<CreateUserDto> _createUserValidator;
+    private readonly IValidator<CreateUserWithAddressDto> _createUserWithAddressValidator;
     private readonly IMapper _mapper;
 
-    public UserController(IUserService userService, IValidator<CreateUserDto> createUserValidator, IMapper mapper)
+    public UserController(
+        IUserService userService,
+        IValidator<CreateUserDto> createUserValidator,
+        IValidator<CreateUserWithAddressDto> createUserWithAddressValidator,
+        IMapper mapper)
     {
         _userService = userService;
         _createUserValidator = createUserValidator;
+        _createUserWithAddressValidator = createUserWithAddressValidator;
         _mapper = mapper;
     }
 
@@ -66,6 +72,34 @@ public class UserController : ControllerBase
             var userEntity = _mapper.Map<User>(user);
             var createdUser = await _userService.CreateAsync(userEntity);
             var userDto = _mapper.Map<UserResponseDto>(createdUser);
+            return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, userDto);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+        }
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<UserResponseDto>> CreateUserWithAddress([FromBody] CreateUserWithAddressDto user)
+    {
+        try
+        {
+            var validationResult = await _createUserWithAddressValidator.ValidateAsync(user);
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var userEntity = _mapper.Map<User>(user);
+            var createdUser = await _userService.CreateUserWithAddressesAsync(userEntity, userEntity.Domicilios!);
+            var userDto = _mapper.Map<UserWithAddressResponseDto>(createdUser);
             return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, userDto);
         }
         catch (ArgumentException ex)
