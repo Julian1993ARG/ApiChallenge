@@ -7,9 +7,9 @@ public class UserMappers : Profile
 {
     public UserMappers()
     {
-        CreateMap<CreateUserDto, User>();
-        CreateMap<UpdateUserDto, User>();
-        CreateMap<User, UserResponseDto>();
-        CreateMap<User, UserWithAddressResponseDto>();
+        CreateMap<CreateUserDto, User>().ReverseMap();
+        CreateMap<UpdateUserDto, User>().ReverseMap();
+        CreateMap<User, UserResponseDto>().ReverseMap();
+        CreateMap<User, UserWithAddressResponseDto>().ReverseMap();
     }
 }

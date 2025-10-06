@@ -55,7 +55,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<User>> CreateUser([FromBody] CreateUserDto user)
+    public async Task<ActionResult<UserResponseDto>> CreateUser([FromBody] CreateUserDto user)
     {
         try
         {
@@ -65,7 +65,8 @@ public class UserController : ControllerBase
 
             var userEntity = _mapper.Map<User>(user);
             var createdUser = await _userService.CreateAsync(userEntity);
-            return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
+            var userDto = _mapper.Map<UserResponseDto>(createdUser);
+            return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, userDto);
         }
         catch (ArgumentException ex)
         {
