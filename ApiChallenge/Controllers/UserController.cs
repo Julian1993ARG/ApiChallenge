@@ -88,7 +88,7 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPost("create-user-with-address")]
     public async Task<ActionResult<UserResponseDto>> CreateUserWithAddress([FromBody] CreateUserWithAddressDto user)
     {
         try
