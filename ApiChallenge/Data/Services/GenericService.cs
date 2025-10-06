@@ -42,6 +42,8 @@ public abstract class GenericService<T, TId> : IGenericService<T, TId>
         if (existingEntity == null)
             return null;
 
+        _context.Entry(existingEntity).State = EntityState.Detached;
+
         entity.Id = id;
         entity.FechaCreacion = existingEntity.FechaCreacion;        
         _repository.Update(entity);
