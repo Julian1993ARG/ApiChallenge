@@ -106,8 +106,8 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPost("CreateUserWithAddress")]
-    public async Task<ActionResult<UserWithAddressResponseDto>> CreateUserWithAddress([FromBody] CreateUserWithAddressDto user)
+    [HttpPost("CreateAlterUserWithAddress")]
+    public async Task<ActionResult<UserWithAddressResponseDto>> CreateAlterUserWithAddress([FromBody] CreateUserWithAddressDto user)
     {
         try
         {
@@ -117,7 +117,7 @@ public class UserController : ControllerBase
 
             var userEntity = _mapper.Map<User>(user);
             var domicilios = _mapper.Map<IEnumerable<Domicilio>>(user.Domicilios);
-            var createdUser = await _userService.CreateUserWithAddressesAsync(userEntity, domicilios);
+            var createdUser = await _userService.CreateAlterUserWithAddressesAsync(userEntity, domicilios);
             var userDto = _mapper.Map<UserWithAddressResponseDto>(createdUser);
             return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, userDto);
         }

@@ -23,7 +23,7 @@ public class CreateAddressDto
 
 public class CreateOrAlterAddressForUserDto : CreateAddressDto
 {
-  public int? DomicilioId { get; set; }
+  public int? Id { get; set; }
 }
 
 public readonly record struct DomicilioResponseDto(int Id, string Calle, string Numero, string Provincia, string Ciudad);

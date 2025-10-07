@@ -4,5 +4,5 @@ namespace ApiChallenge.Services;
 
 public interface IDomicilioService : IGenericService<Domicilio, int>
 {
-    Task<IEnumerable<Domicilio>> CreateMultipleAsync(IEnumerable<Domicilio> domicilios);
+    Task<IEnumerable<Domicilio>> CreateOrAlterMultipleAsync(IEnumerable<Domicilio> domicilios);
 }

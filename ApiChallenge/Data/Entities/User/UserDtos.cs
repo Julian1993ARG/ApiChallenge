@@ -18,9 +18,10 @@ public class CreateUserDto
 
 public class CreateUserWithAddressDto : CreateUserDto
 {
+  public int? Id { get; set; }
   [Required(ErrorMessage = "Debe incluir al menos un domicilio")]
   [MinLength(1, ErrorMessage = "Debe incluir al menos un domicilio")]
-  public List<CreateAddressDto>? Domicilios { get; set; }
+  public List<CreateOrAlterAddressForUserDto>? Domicilios { get; set; }
 }
 public class UpdateUserDto
 {

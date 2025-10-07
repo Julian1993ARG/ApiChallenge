@@ -35,33 +35,51 @@ public class UserService : GenericService<User, int>, IUserService
         return users;
     }
 
-    public async Task<User> CreateUserWithAddressesAsync(User user, IEnumerable<Domicilio> domicilios)
+    public async Task<User> CreateAlterUserWithAddressesAsync(User user, IEnumerable<Domicilio> domicilios)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
 
         try
         {
-            if (await EmailExistsAsync(user.Email!))
+            User entity;
+            if (user.Id == 0)
             {
-                throw new InvalidOperationException($"Ya existe un usuario con el email: {user.Email}");
+                // Crear usuario sin SaveChanges
+                user.FechaCreacion = DateTime.UtcNow;
+                entity = await _userRepository.Insert(user);
+            }
+            else
+            {
+                var existingUser = await GetByIdAsync(user.Id);
+                if (existingUser == null)
+                    throw new KeyNotFoundException($"No se encontró un usuario con Id: {user.Id}");
+                    
+                _context.Entry(existingUser).State = EntityState.Detached;
+                user.FechaCreacion = existingUser.FechaCreacion;
+                _userRepository.Update(user);
+                entity = user;
             }
 
-            var createdUser = await CreateAsync(user);
+            await _context.SaveChangesAsync();
 
             foreach (var domicilio in domicilios)
-            {
-                domicilio.UsuarioId = createdUser.Id;
-            }
+                domicilio.UsuarioId = entity.Id;
 
-            await _domicilioService.CreateMultipleAsync(domicilios);
+            await _domicilioService.CreateOrAlterMultipleAsync(domicilios);
+            
+            await _context.SaveChangesAsync();
 
             await transaction.CommitAsync();
 
+            // Limpiar el contexto para evitar duplicados por entidades rastreadas
+            _context.ChangeTracker.Clear();
+
             var userWithAddresses = await _userRepository.GetAll()
                 .Include(u => u.Domicilios)
-                .FirstOrDefaultAsync(u => u.Id == createdUser.Id);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == entity.Id);
 
-            return userWithAddresses ?? createdUser;
+            return userWithAddresses ?? entity;
         }
         catch
         {

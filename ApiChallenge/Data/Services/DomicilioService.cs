@@ -1,6 +1,7 @@
 using ApiChallenge.Data;
 using ApiChallenge.Data.Entities;
 using ApiChallenge.Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiChallenge.Services;
 
@@ -13,29 +14,31 @@ public class DomicilioService : GenericService<Domicilio, int>, IDomicilioServic
     {
         _domicilioRepository = domicilioRepository;
     }
-    public async Task<IEnumerable<Domicilio>> CreateMultipleAsync(IEnumerable<Domicilio> domicilios)
+    public async Task<IEnumerable<Domicilio>> CreateOrAlterMultipleAsync(IEnumerable<Domicilio> domicilios)
     {
-        using var transaction = await _context.Database.BeginTransactionAsync();
+        var entities = new List<Domicilio>();
         
-        try
+        foreach (var domicilio in domicilios)
         {
-            var createdDomicilios = new List<Domicilio>();
-            
-            foreach (var domicilio in domicilios)
+            if (domicilio.Id != 0)
             {
-                var created = await _domicilioRepository.Insert(domicilio);
-                createdDomicilios.Add(created);
+                var existingDomicilio = await GetByIdAsync(domicilio.Id);
+                if (existingDomicilio != null)
+                {
+                    _context.Entry(existingDomicilio).State = EntityState.Detached;
+                    domicilio.FechaCreacion = existingDomicilio.FechaCreacion;
+                    
+                    _domicilioRepository.Update(domicilio);
+                    entities.Add(domicilio);
+                    continue;
+                }
             }
-
-            await SaveChangesAsync();
-            await transaction.CommitAsync();
             
-            return createdDomicilios;
+            domicilio.FechaCreacion = DateTime.UtcNow;
+            var created = await _domicilioRepository.Insert(domicilio);
+            entities.Add(created);
         }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        
+        return entities;
     }
 }
