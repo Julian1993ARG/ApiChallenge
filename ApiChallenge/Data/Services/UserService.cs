@@ -44,7 +44,6 @@ public class UserService : GenericService<User, int>, IUserService
             User entity;
             if (user.Id == 0)
             {
-                // Crear usuario sin SaveChanges
                 user.FechaCreacion = DateTime.UtcNow;
                 entity = await _userRepository.Insert(user);
             }
@@ -71,7 +70,6 @@ public class UserService : GenericService<User, int>, IUserService
 
             await transaction.CommitAsync();
 
-            // Limpiar el contexto para evitar duplicados por entidades rastreadas
             _context.ChangeTracker.Clear();
 
             var userWithAddresses = await _userRepository.GetAll()
