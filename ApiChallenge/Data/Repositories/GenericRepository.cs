@@ -29,7 +29,7 @@ public abstract class GenericRepository<T, TId> : IGenericRepository<T, TId>
             return null;
             
         return await _context.Set<T>()
-            .FirstOrDefaultAsync(a => EqualityComparer<TId>.Default.Equals(a.Id, id));
+            .FirstOrDefaultAsync(a => a.Id!.Equals(id));
     }
 
 
