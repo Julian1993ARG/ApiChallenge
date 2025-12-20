@@ -8,11 +8,11 @@ public abstract class GenericRepository<T, TId> : IGenericRepository<T, TId>
     where T : BaseEntity<TId>
     where TId : IEquatable<TId>
 {
-    private readonly ChallengeDbContext _context;
+    private readonly ApplicationDbContext _context;
     private bool _disposed = false;
     protected DbSet<T> Entities => _context.Set<T>();
 
-    protected GenericRepository(ChallengeDbContext context)
+    protected GenericRepository(ApplicationDbContext context)
     {
         _context = context;
     }

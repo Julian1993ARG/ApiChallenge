@@ -15,6 +15,7 @@ builder.Services.AddSwaggerGen();
 // Repository registrations
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDomicilioRepository, DomicilioRepository>();
+
 // Service registrations
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDomicilioService, DomicilioService>();
@@ -25,17 +26,17 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidation>();
 builder.Services.AddScoped<IValidator<CreateUserWithAddressDto>, CreateUserWithAddressValidation>();
 builder.Services.AddScoped<IValidator<CreateAddressDto>, CreateDomicilioForUserValidation>();
+
 // Configure DbContext with connection string from appsettings
-builder.Services.AddDbContext<ChallengeDbContext>(options =>
-    options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection") 
-        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")));
+builder.Services.AddDbContext<ApplicationDbContext>(
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("Database")));
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    ChallengeDbContext context = scope.ServiceProvider.GetRequiredService<ChallengeDbContext>();
-    context.Database.Migrate();
+    ApplicationDbContext context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    //context.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
@@ -45,7 +46,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", () => "Hello World!");
 app.UseHttpsRedirection();
 
 app.MapControllers();

@@ -9,7 +9,7 @@ public class DomicilioService : GenericService<Domicilio, int>, IDomicilioServic
 {
     private readonly IDomicilioRepository _domicilioRepository;
 
-    public DomicilioService(IDomicilioRepository domicilioRepository, ChallengeDbContext context)
+    public DomicilioService(IDomicilioRepository domicilioRepository, ApplicationDbContext context)
         : base(domicilioRepository, context)
     {
         _domicilioRepository = domicilioRepository;

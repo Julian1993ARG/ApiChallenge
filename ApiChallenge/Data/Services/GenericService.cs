@@ -10,10 +10,10 @@ public abstract class GenericService<T, TId> : IGenericService<T, TId>
     where TId : IEquatable<TId>
 {
     protected readonly IGenericRepository<T, TId> _repository;
-    protected readonly ChallengeDbContext _context;
+    protected readonly ApplicationDbContext _context;
     private bool _disposed = false;
 
-    protected GenericService(IGenericRepository<T, TId> repository, ChallengeDbContext context)
+    protected GenericService(IGenericRepository<T, TId> repository, ApplicationDbContext context)
     {
         _repository = repository;
         _context = context;

@@ -5,8 +5,8 @@ namespace ApiChallenge.Data.Repositories;
 
 public class UserRepository : GenericRepository<User, int>, IUserRepository
 {
-    private readonly ChallengeDbContext _context;
-    public UserRepository(ChallengeDbContext context) : base(context)
+    private readonly ApplicationDbContext _context;
+    public UserRepository(ApplicationDbContext context) : base(context)
     {
         _context = context;
     }

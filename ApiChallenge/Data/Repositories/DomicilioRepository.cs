@@ -5,8 +5,8 @@ namespace ApiChallenge.Data.Repositories;
 
 public class DomicilioRepository : GenericRepository<Domicilio, int>, IDomicilioRepository
 {
-    private readonly ChallengeDbContext _context;
-    public DomicilioRepository(ChallengeDbContext context) : base(context)
+    private readonly ApplicationDbContext _context;
+    public DomicilioRepository(ApplicationDbContext context) : base(context)
     {
         _context = context;
     }

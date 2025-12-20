@@ -10,7 +10,7 @@ public class UserService : GenericService<User, int>, IUserService
     private readonly IUserRepository _userRepository;
     private readonly IDomicilioService _domicilioService;
 
-    public UserService(IUserRepository userRepository, IDomicilioService domicilioService, ChallengeDbContext context)
+    public UserService(IUserRepository userRepository, IDomicilioService domicilioService, ApplicationDbContext context)
         : base(userRepository, context)
     {
         _userRepository = userRepository;
