@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  apichallenge:
+    image: ${DOCKER_REGISTRY-}apichallenge
+    build:
+      context: .
+      dockerfile: ApiChallenge/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+
+  challenge.database:
+     image: postgres:latest
+     container_name: challenge.database
+     environment:
+       - POSTGRES_USER=postgres
+       - POSTGRES_PASSWORD=postgres
+       - POSTGRES_DB=postgres
+     volumes:
+       - ./.containers/challenge-db:/var/lib/postgresql/data
+     ports:
+       - "5432:5432"
