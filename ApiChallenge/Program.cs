@@ -36,7 +36,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     ApplicationDbContext context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    //context.Database.Migrate();
+    context.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
