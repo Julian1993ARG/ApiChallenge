@@ -4,6 +4,7 @@ using ApiChallenge.Services;
 using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace ApiChallenge.Controllers;
 
@@ -15,17 +16,22 @@ public class UserController : ControllerBase
     private readonly IValidator<CreateUserDto> _createUserValidator;
     private readonly IValidator<CreateUserWithAddressDto> _createUserWithAddressValidator;
     private readonly IMapper _mapper;
+    private readonly ILogger<UserController> _logger;
+
+    private readonly string CacheKeyPrefix = "user-";
 
     public UserController(
         IUserService userService,
         IValidator<CreateUserDto> createUserValidator,
         IValidator<CreateUserWithAddressDto> createUserWithAddressValidator,
-        IMapper mapper)
+        IMapper mapper,
+        ILogger<UserController> logger)
     {
         _userService = userService;
         _createUserValidator = createUserValidator;
         _createUserWithAddressValidator = createUserWithAddressValidator;
         _mapper = mapper;
+        _logger = logger;
     }
 
     [HttpGet("Search")]
@@ -62,18 +68,36 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserResponseDto>> GetUser(int id)
+    public async Task<ActionResult<UserResponseDto>> GetUser(
+        int id,
+        [FromServices] IDistributedCache cache,
+        CancellationToken ct)
     {
+        var cacheKey = CacheKeyPrefix + id;
+
         try
         {
-            var user = await _userService.GetByIdAsync(id);
-            if (user == null)
+            var user = await cache.GetAsync(cacheKey, async token =>
+            {
+                _logger.LogInformation("Cache miss for key {CacheKey}; fetching from service", cacheKey);
+                var entity = await _userService.GetByIdAsync(id);
+                var dto = _mapper.Map<UserResponseDto>(entity);
+                return dto;
+            },
+            CacheOptions.DefaultExpiration,
+            ct);
+
+            if (EqualityComparer<UserResponseDto>.Default.Equals(user, default))
+            {
                 return NotFound($"Usuario con ID {id} no encontrado");
-            var userDto = _mapper.Map<UserResponseDto>(user);
-            return Ok(userDto);
+            }
+
+            _logger.LogInformation("Cache hit or populated for key {CacheKey}; returning user id {Id}", cacheKey, id);
+            return Ok(user);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error accessing cache for key {CacheKey}", cacheKey);
             return StatusCode(500, $"Error interno del servidor: {ex.Message}");
         }
     }
@@ -136,7 +160,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<UserResponseDto>> UpdateUser(int id, [FromBody] UpdateUserDto user)
+    public async Task<ActionResult<UserResponseDto>> UpdateUser(int id, [FromBody] UpdateUserDto user, [FromServices] IDistributedCache cache)
     {
         try
         {
@@ -147,6 +171,7 @@ public class UserController : ControllerBase
             var updatedUser = await _userService.UpdateAsync(id, userEntity);
             if (updatedUser == null)
                 return NotFound($"Usuario con ID {id} no encontrado");
+            await cache.RemoveAsync(CacheKeyPrefix + id);
             var userDto = _mapper.Map<UserResponseDto>(updatedUser);
             return Ok(userDto);
         }
@@ -165,13 +190,15 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteUser(int id)
+    public async Task<ActionResult> DeleteUser(int id, IDistributedCache cache)
     {
         try
         {
             var result = await _userService.DeleteAsync(id);
             if (!result)
                 return NotFound($"Usuario con ID {id} no encontrado");
+            
+            await cache.RemoveAsync(CacheKeyPrefix + id);
 
             return NoContent();
         }
