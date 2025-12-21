@@ -20,4 +20,11 @@ services:
      volumes:
        - ./.containers/postgresql:/var/lib/postgresql
      ports:
-       - "5432:5432"
+       - "5442:5432"
+  
+  challenge.cache:
+     image: redis:latest
+     restart: always
+     ports:
+       - "6379:6379"
+  

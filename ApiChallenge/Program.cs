@@ -31,6 +31,10 @@ builder.Services.AddScoped<IValidator<CreateAddressDto>, CreateDomicilioForUserV
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("Database")));
 
+// Configure Redis caching 
+builder.Services.AddStackExchangeRedisCache(options =>
+    options.Configuration = builder.Configuration.GetConnectionString("Cache"));
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
